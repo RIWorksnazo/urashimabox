@@ -556,3 +556,14 @@ img[src="tamatebako.png"] {
     max-width: 45%;
     height: auto;
 }
+
+@media screen and (max-width: 600px) {
+    .image-row {
+        gap: 10px;
+    }
+
+    .image-row img {
+        width: 150px;
+        max-width: 45%;
+    }
+}
