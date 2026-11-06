@@ -541,3 +541,18 @@ img[src="tamatebako.png"] {
         height: auto;
     }
 }
+
+/* 画像を横並びにする */
+.image-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+/* 画像のサイズ */
+.image-row img {
+    width: 200px;
+    max-width: 45%;
+    height: auto;
+}
