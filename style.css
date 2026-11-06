@@ -462,3 +462,50 @@ input{
         clip-path: inset(0 0 0 0);
     }
 }
+
+/* =========================
+   スマホ表示の調整
+========================= */
+
+@media screen and (max-width: 600px) {
+
+    /* 竜宮城の画像 */
+    #ryugujo {
+        width: 80%;
+        max-width: 300px;
+        height: auto;
+    }
+
+    /* 大見出し */
+    h1 {
+        font-size: 26px;
+    }
+
+    /* 小見出し */
+    h2 {
+        font-size: 18px;
+    }
+
+    /* 通常の文章 */
+    p {
+        font-size: 14px;
+        line-height: 1.8;
+    }
+
+    /* ボタン */
+    button {
+        font-size: 14px;
+        max-width: 90%;
+    }
+
+    /* 謎の画像 */
+    #puzzleAAA img,
+    #puzzleABA img,
+    #puzzleBAA img,
+    #puzzleBBA img {
+        width: 95%;
+        max-width: 100%;
+        height: auto;
+    }
+
+}

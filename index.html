@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="style.css">
 <script src="common.js"></script>
 
-<title>浦島太郎</title>
+<title>ウラシマボックス</title>
 
 </head>
 
@@ -25,33 +25,6 @@
     id="ryugujo"
     alt="竜宮城">
 
-<!-- 記憶ポップアップ -->
-<div id="memoryViewer" class="modal hidden">
-
-    <div class="modalContent">
-
-        <h2 id="viewerTitle"></h2>
-
-        <p id="viewerText"></p>
-
-        <img
-            id="viewerImage"
-            class="hidden"
-            src=""
-            style="
-                max-width:250px;
-                margin-top:15px;
-                border-radius:10px;
-            ">
-
-        <button onclick="closeMemoryViewer()">
-            閉じる
-        </button>
-
-    </div>
-
-</div>
-
 <h1 id="title">STORY</h1>
 
 <div id="story">
@@ -63,260 +36,17 @@
     </p>
     
     <img
-        src="tamatebako.png"
-        id="box"
-    alt="玉手箱">
+        src="urasima.png"
+        id="urasima"
+    alt="ウラシマ">
 
 </div>
 
 <div id="smoke-container"></div>
 
-<button id="boxButton" onclick="openBox()">
-    開ける
-</button>
-
-
-<div id="after" class="hidden">
-
-        <div id="stepStory">
-
-        <p>
-        箱を開けた瞬間、白い煙があたりを包み、気づけば僕は竜宮城にいた。<br>
-        色々な記憶が薄れている気がする。ただ、竜宮城に前に来たことがあるのは覚えている。<br>
-        「...なんでまたここに来たんだろう？」<br>
-        思わずつぶやいた時、声が僕の後ろからした。<br>
-        「箱を開けてしまったのですか！？開けてはいけないと言ったでしょう！」<br>
-        後ろを向くと、怒った顔の乙姫が居た。<br>
-       「あなたが開けた箱に入っていた煙は人間を急速に老けさせてしまう煙...。ここに長くいると死んでしまいますわ！」<br>
-        「えっ！？じゃあなんでそんな危険な箱を僕に...」<br>
-        「今はそんなことを気にしている場合じゃありません！ええっと、どこだったかしら...。」<br>
-        オトヒメは忙しそうに駆け巡り、何かを探している。<br>
-        「...あった！ウラシマ、あなたがこの状況で助かるには、この暗号を解いて私に答えを伝えるのです。」<br>
-        「ただし、ただ解いて良いわけではありません。暗号を解くときは、
-        </p>
-
-        <h2>”私との約束に従うこと”</h2>
-
-        <p>
-        ...絶対に守るのですよ？」<br>
-        </p>
-
-        <img
-            src="ikariotohime.png"
-            id="otohime"
-        alt="怒り乙姫">
-
-        <p>
-        なんだかよくわからないが、今の僕にはその暗号を解くしか選択肢はないようだ...。
-        </p>
-
-    </div>
-
-    <h2>まずはA〜Dを解き、Eの答えを導こう。</h2><br>
-
-    <h2>
-        オトヒメとの約束：
-    <br>
-        「ピースの白い面は使わないこと」
-    </h2>
-
-    <input id="answer">
-
-    <button class="answerButton" onclick="check()">
-        解答
-    </button>
-
-    <p id="result"></p>
-
-</div>
-
-
 <script>
 
-function openBox(){
-
-    createSmoke();
-
-    setTimeout(()=>{
-
-        document
-            .getElementById("title")
-            .innerHTML =
-            "STEP1";
-
-        document
-            .getElementById("story")
-            .style.display = "none";
-
-        document
-            .getElementById("boxButton")
-            .style.display = "none";
-
-        document
-            .getElementById("after")
-            .classList.remove("hidden");
-
-        startFog();
-
-    },2000);
-}
-
-function createSmoke(){
-
-    const container =
-        document.getElementById("smoke-container");
-
-    for(let i=0;i<40;i++){
-
-        const smoke =
-            document.createElement("div");
-
-        smoke.className = "smoke";
-
-        smoke.style.left =
-            (window.innerWidth / 2 - 60)
-            + (Math.random() * 120 - 60)
-            + "px";
-
-        smoke.style.top =
-            (window.innerHeight / 2 - 60)
-            + (Math.random() * 120 - 60)
-            + "px";
-
-        smoke.style.setProperty(
-            "--dx",
-            (Math.random() * 600 - 300) + "px"
-        );
-
-        smoke.style.setProperty(
-            "--dy",
-            (Math.random() * 400 - 200) + "px"
-        );
-
-        container.appendChild(smoke);
-
-        setTimeout(()=>{
-            smoke.remove();
-        },4000);
-    }
-}
-
-function check(){
-
-    const ans =
-        document
-        .getElementById("answer")
-        .value
-        .trim()
-        .toLowerCase();
-
-    // A
-    if(
-        ans === "竜宮城" ||
-        ans === "りゅうぐうじょう" ||
-        ans === "リュウグウジョウ"
-    ){
-
-        document
-            .getElementById("result")
-            .innerHTML =
-            "A正解";
-
-        return;
-    }
-
-    // B
-    if(
-        ans === "ウラシマ" ||
-        ans === "うらしま" ||
-        ans === "浦島"
-    ){
-
-        document
-            .getElementById("result")
-            .innerHTML =
-            "B正解";
-
-        return;
-    }
-
-    // C
-    if(
-        ans === "ミドリ" ||
-        ans === "みどり" ||
-        ans === "緑"
-    ){
-
-        document
-            .getElementById("result")
-            .innerHTML =
-            "C正解";
-
-        return;
-    }
-
-    // D
-    if(
-        ans === "ひらがな"||
-        ans === "ヒラガナ"||
-        ans === "平仮名"
-    ){
-
-        document
-            .getElementById("result")
-            .innerHTML =
-            "D正解";
-
-        return;
-    }
-
-    // E1
-    if(
-        ans === "せいじつ"||
-        ans === "セイジツ"||
-        ans === "誠実"
-    ){
-        saveRoute(1, "A");
-
-        nextPage = "step2a.html";
-
-        unlockMemory(1);
-
-        return;
-    }
-
-    // E2
-    if(
-        ans === "くろう"||
-        ans === "クロウ"||
-        ans === "苦労"
-    ){        
-        saveRoute(2, "B");
-
-        createSmoke();
-
-        setTimeout(()=>{
-
-            location.href =
-            "step2b.html";
-
-        },2000);
-
-        return;
-    }
-
-    document
-        .getElementById("result")
-        .innerHTML =
-        "不正解";
-}
-
-
 </script>
-
-<button onclick="localStorage.clear();location.reload();">
-記憶リセット
-</button>
 
 </body>
 </html>
