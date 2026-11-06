@@ -463,6 +463,7 @@ input{
     }
 }
 
+
 /* =========================
    スマホ表示の調整
 ========================= */
@@ -472,7 +473,7 @@ input{
     /* 竜宮城の画像 */
     #ryugujo {
         width: 80%;
-        max-width: 300px;
+        max-width: 100px;
         height: auto;
     }
 
@@ -508,4 +509,35 @@ input{
         height: auto;
     }
 
+    
+
+}
+
+/* ウラシマの画像サイズ */
+img[src="urasima.png"] {
+    width: 200px;
+    max-width: 80%;
+    height: auto;
+}
+
+@media screen and (max-width: 600px) {
+    img[src="urasima.png"] {
+        width: 100px;
+        max-width: 60%;
+        height: auto;
+    }
+}
+
+img[src="tamatebako.png"] {
+    width: 80px;
+    max-width: 80%;
+    height: auto;
+}
+
+@media screen and (max-width: 600px) {
+    img[src="tamatebako.png"] {
+        width: 40px;
+        max-width: 60%;
+        height: auto;
+    }
 }
