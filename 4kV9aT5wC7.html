@@ -365,7 +365,7 @@ function startCrystalStory(route, answer, penColor) {
       {text:"それができたら良いのですが、お恥ずかしいことに、水晶を運ぶときに手を怪我しちゃって、文字が書けません。ウラシマが私の分まで書いても、水晶の効果は発揮されないですし…。"},
       {text:"力になれずすみません…。"},
       {parts:["「", "を", "」"], answers:["日記帳", "破る"]},
-      {text:"なるほど、確かに日記になら私が書いた赤文字がありますね。どの部分を破りましょう？"},
+      {text:"なるほど、確かに日記になら私が書いた赤文字がありますね。どの部分を使いましょう？"},
       {parts:["「破る文字は", "」"], answers:["らいす"]}
     ];
     let position = 0;
@@ -387,9 +387,9 @@ function startCrystalStory(route, answer, penColor) {
             conversationLog.appendChild(empty);
             return;
         }
-        completedScenes.forEach((text, index) => {
+        completedScenes.forEach((text) => {
             const entry = document.createElement("p");
-            entry.textContent = `${index + 1}. ${text}`;
+            entry.textContent = text;
             conversationLog.appendChild(entry);
         });
     }
