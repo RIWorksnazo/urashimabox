@@ -2217,10 +2217,9 @@ function handleBBBPastAnswer(data){
         }
     }
     markPastButtonUsed(historyIndex,step,kind);
-    // ボタンを押した直後に全履歴画面へ使用済みを反映
-    document.querySelectorAll("iframe").forEach(frame=>{
-        try{frame.contentWindow?.postMessage({type:"URASIMA_PAST_USED",historyIndex,step,kind},bbbMessageOrigin());}catch(e){}
-    });
+
+// 入れ子になったすべての記憶画面を即座に更新
+refreshBBBRecordTree();
     sessionStorage.setItem("bbbSpecialMode","true");
     if(step===3 && record.page==="3Az3Pc8Nm4.html") registerCrystalStep3aUse(historyIndex);
     saveRecordChainForNavigation();
@@ -2520,3 +2519,25 @@ function keepCrystalVisible() {
 
 // ページを開くたびに水晶の所持状態を復元
 keepCrystalVisible();
+
+
+/* Google Analytics 4 アクセス解析 */
+(function () {
+    const measurementId = "G-XXXXXXXXXX";
+
+    if (typeof window.gtag === "function") return;
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.src = "https://www.googletagmanager.com/gtag/js?id=" +
+        encodeURIComponent(measurementId);
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function () {
+        window.dataLayer.push(arguments);
+    };
+
+    window.gtag("js", new Date());
+    window.gtag("config", measurementId);
+})();
