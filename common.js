@@ -2376,7 +2376,6 @@ function setupCrystalDisplay(){
 
 if (
     panel &&
-    sessionStorage.getItem("bbbRecordUnlocked") !== "true" &&
     localStorage.getItem("bbbCrystalAcquired") === "true" &&
     !document.getElementById("bbbCrystalMemoryButton")
 ) {
