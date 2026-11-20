@@ -2110,7 +2110,7 @@ body:has(#recordSplitLayout) #recordSplitLayout > #currentPane[style*="visibilit
     bottom: calc(5vh - 26px);
     width: 200px;
 
-    color: #ff2020;
+    color: #ea4a3e;
     font-size: 16px;
     font-weight: bold;
     text-align: center;
