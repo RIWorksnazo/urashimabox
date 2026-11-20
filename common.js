@@ -1504,6 +1504,8 @@ function openRecordSplit(){
 
         "ryugujo",
 
+        "ryugujoHintText",
+
         "fogLeft",
 
         "fogRight",
@@ -2498,9 +2500,18 @@ function openHintConfirm() {
 
 document.addEventListener("DOMContentLoaded", function () {
     const ryugujo = document.getElementById("ryugujo");
+    if (!ryugujo) return;
 
-    if (ryugujo) {
-        ryugujo.style.cursor = "pointer";
-        ryugujo.addEventListener("click", openHintConfirm);
+    ryugujo.style.cursor = "pointer";
+    ryugujo.addEventListener("click", openHintConfirm);
+
+    // 竜宮城の下にヒント案内を追加
+    if (!document.getElementById("ryugujoHintText")) {
+        const hintText = document.createElement("div");
+        hintText.id = "ryugujoHintText";
+        hintText.textContent = "ヒントはこちらから";
+        hintText.addEventListener("click", openHintConfirm);
+
+        ryugujo.insertAdjacentElement("afterend", hintText);
     }
 });

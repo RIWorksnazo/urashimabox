@@ -2095,3 +2095,50 @@ img {
 body:has(#recordSplitLayout) #recordSplitLayout > #currentPane[style*="visibility: visible"] {
     visibility: visible;
 }
+
+/* 竜宮城をタップできるようにする */
+#ryugujo,
+#currentPane > #ryugujo {
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+/* 竜宮城の下に表示するヒント案内 */
+#ryugujoHintText {
+    position: fixed;
+    left: 20px;
+    bottom: calc(5vh - 26px);
+    width: 200px;
+
+    color: #ff2020;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+
+    cursor: pointer;
+    z-index: 11;
+    pointer-events: auto;
+}
+
+/* 分割画面内 */
+#currentPane > #ryugujoHintText {
+    position: absolute;
+    left: 20px;
+    bottom: calc(5% - 26px);
+    width: 200px;
+}
+
+/* スマホ表示 */
+@media screen and (max-width: 600px) {
+    #ryugujoHintText {
+        width: 100px;
+        font-size: 11px;
+        bottom: calc(5vh - 20px);
+    }
+
+    #currentPane > #ryugujoHintText {
+        left: 10px;
+        width: 120px;
+        bottom: calc(5% - 20px);
+    }
+}
