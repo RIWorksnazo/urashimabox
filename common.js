@@ -2110,7 +2110,6 @@ function markPastButtonUsed(historyIndex,step,kind){
     sessionStorage.setItem("bbbUsedButtons",JSON.stringify(used));
 }
 function finishBBBSpecialMode(){
-    sessionStorage.removeItem("bbbCrystalVisible");
     sessionStorage.removeItem("bbbRestoreRecordChain");
     const wasSpecial=sessionStorage.getItem("bbbRecordUnlocked") === "true"
         || sessionStorage.getItem("bbbSpecialMode") === "true";
@@ -2376,11 +2375,7 @@ function setupCrystalDisplay(){
     if(reviewMode)return;
     const panel = document.getElementById("memoryPanel");
 
-if (
-    panel &&
-    localStorage.getItem("bbbCrystalAcquired") === "true" &&
-    !document.getElementById("bbbCrystalMemoryButton")
-) {
+if (localStorage.getItem("bbbCrystalAcquired") === "true") {
 
         const button=document.createElement("button");
 
@@ -2515,3 +2510,13 @@ document.addEventListener("DOMContentLoaded", function () {
         ryugujo.insertAdjacentElement("afterend", hintText);
     }
 });
+
+// 水晶獲得後は常に手に持っている状態にする
+function keepCrystalVisible() {
+    if (localStorage.getItem("bbbCrystalAcquired") === "true") {
+        sessionStorage.setItem("bbbCrystalVisible", "true");
+    }
+}
+
+// ページを開くたびに水晶の所持状態を復元
+keepCrystalVisible();
