@@ -2523,7 +2523,7 @@ keepCrystalVisible();
 
 /* Google Analytics 4 アクセス解析 */
 (function () {
-    const measurementId = "G-XXXXXXXXXX";
+    const measurementId = "G-F13B8YLDBZ";
 
     if (typeof window.gtag === "function") return;
 
