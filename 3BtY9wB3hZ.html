@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<script src="common.js"></script>
+
+<title>STEP3</title>
+
+<style>
+
+/* =========================
+   マップ
+========================= */
+
+#selectedSymbols{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:10px;
+
+    min-height:55px;
+
+    margin:10px auto 0;
+
+}
+
+
+/* 選択した記号 */
+
+.selectedSymbol{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:50%;
+
+    background:white;
+
+    color:#003344;
+
+    border:3px solid #003344;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+
+/* マップ全体 */
+
+#mapArea{
+
+    position:relative;
+
+    width:650px;
+
+    max-width:95%;
+
+    margin:20px auto;
+
+}
+
+
+/* マップ画像 */
+
+#mapImage{
+
+    display:block;
+
+    width:100%;
+
+    height:auto;
+
+}
+
+
+/* =========================
+   部屋ボタン
+========================= */
+
+.roomButton{
+
+    position:absolute;
+
+    padding:0;
+
+    margin:0;
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    transition:0.15s;
+
+    z-index:2;
+
+}
+
+/* 選択順の丸数字 */
+.selectionNumber{
+    position:absolute;
+    top:0;
+    right:0;
+    width:40px;
+    height:40px;
+    border-radius:50%;
+    background:rgb(252, 252, 252);
+    color:#5c5c5c;
+    font-size:22px;
+    font-weight:bold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    pointer-events:none;
+    z-index:20;
+}
+
+
+/* ボタン画像 */
+
+.roomButton img{
+
+    display:block;
+
+    width:100%;
+
+    height:100%;
+
+}
+
+
+/* マウスを乗せたとき */
+
+.roomButton:hover{
+
+    filter:brightness(0.92);
+
+}
+
+
+/* 押している瞬間 */
+
+.roomButton:active{
+
+    transform:scale(0.97);
+
+}
+
+/* -------------------------
+   部屋のクリック範囲
+------------------------- */
+
+
+/* 中央上・楓 */
+
+.room2{
+
+    left:5.82%;
+
+    top:3.1%;
+
+    width:25.3%;
+
+    height:29%;
+
+}
+
+
+/* 中央下・桜*/
+
+.room3{
+
+    left:5.82%;
+
+    top:35.38%;
+
+    width:25.3%;
+
+    height:36%;
+
+}
+
+
+/* 右上・松 */
+
+.room4{
+
+    left:61.9%;
+
+    top:3.1%;
+
+    width:25.3%;
+
+    height:29%;
+
+}
+
+
+/* 右中央・竹 */
+
+.room5{
+
+    left:61.9%;
+
+    top:35.3%;
+
+    width:25.3%;
+
+    height:29%;
+
+}
+
+
+/* 右下・梅 */
+
+.room6{
+
+    left:61.9%;
+
+    top:67.5%;
+
+    width:25.3%;
+
+    height:29%;
+
+}
+
+
+#mapResult{
+
+    color:white;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    min-height:30px;
+
+    margin:5px auto 20px;
+
+}
+
+/* =========================
+   玉手箱を貰った部屋の選択
+========================= */
+
+#giftRoomChoices{
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:15px;
+
+    max-width:650px;
+
+    margin:20px auto 30px;
+
+}
+
+#giftRoomChoices label{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:6px;
+
+    padding:12px 18px;
+
+    background:white;
+
+    color:#003344;
+
+    border-radius:10px;
+
+    font-size:20px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+}
+
+#giftRoomChoices input{
+
+    width:20px;
+
+    height:20px;
+
+    cursor:pointer;
+
+}
+
+/* スマホ版の部屋選択時の丸数字 */
+@media screen and (max-width: 600px) {
+    .selectionNumber {
+        width: 26px;
+        height: 26px;
+        font-size: 15px;
+    }
+}
+
+/* スマホ版：生き物の画像サイズ調整 */
+@media screen and (max-width: 600px) {
+
+    .creatureRow {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .creatureRow img {
+        width: 22%;
+        max-width: 75px;
+        height: auto;
+        min-width: 0;
+        object-fit: contain;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="fogLeft"></div>
+<div id="fogRight"></div>
+
+<div id="smoke-container"></div>
+
+<div id="memoryPanel"></div>
+
+<div id="ground"></div>
+
+<img
+    src="ryuuguujyou.png"
+    id="ryugujo"
+    alt="竜宮城">
+
+<h1>STEP3</h1>
+
+<!-- 記憶ポップアップ -->
+
+<div id="memoryViewer" class="modal hidden">
+
+    <div class="modalContent">
+
+        <h2 id="viewerTitle"></h2>
+
+        <p id="viewerText"></p>
+
+        <img
+            id="viewerImage"
+            class="hidden"
+            src=""
+            style="
+                max-width:250px;
+                margin-top:15px;
+                border-radius:10px;
+            ">
+
+        <button onclick="closeMemoryViewer()">
+            閉じる
+        </button>
+
+    </div>
+
+</div>
+
+<div id="story">
+    
+    <p>
+    「約束を破ったのですか！？次からは破らないでくださいね。」<br>
+    オトヒメは怒っている。<br>
+    「次の暗号では、前に竜宮城に来た時の記憶が必要です。ウラシマは覚えていますか？」<br>
+    「あんまり覚えてないな...。」<br>
+    「では、海の生き物達に聞きにいきましょう！」<br>
+    「ただし、タコの言うことは信用してはいけません。」
+    </p>
+
+    <img
+        src="ikariotohime.png"
+        id="otohime"
+    alt="怒り乙姫">
+
+</div>
+
+<br><br>
+
+<h2>
+    海の生き物たちの話を頼りに、<br>
+    ウラシマが竜宮城を周った順番と<br>
+    玉手箱を貰った部屋を特定しよう。<br>
+</h2>
+
+<h2>
+    <br>覚えていること
+</h2>
+
+<div id="remembered">
+
+    <p>
+        ・ウラシマは全部で５つの部屋を周り、５つのイベントに参加した。<br>
+        ・その日は竜宮城にある全ての部屋で1回ずつイベントが行われた。<br>
+        ・イベントは同じ時間に2つ以上開催されることはない<br>
+        ・最初に開催されたイベントから順に、第1イベント、第2イベント...と呼んでいる。<br>
+        ・イベントはその部屋にいる全員が参加する。<br>
+        ・玉手箱を貰うイベントにだけオトヒメがいた。<br>
+        ・参加したイベントで、玉手箱を貰うイベントは最初か最後だった。<br>
+        ・その日居た海の生き物は以下の7匹。<br>
+        ※海の生き物達はウラシマも1匹として数えている。
+    </p>
+
+</div>
+
+<div class="promiseBox">
+    <img src="hukidasi.png" alt="オトヒメとの約束" class="promiseImage">
+    <div class="promiseText">
+        タコの発言は嘘として考えること
+    </div>
+</div>
+
+
+<h2>海の生き物たちに部屋の話を聞こう</h2>
+
+<div class="creatureRow">
+
+    <img src="hirame.png" onclick="talk(1)">
+    <img src="karei.png" onclick="talk(2)">
+    <img src="ika.png" onclick="talk(3)">
+    <img src="tako.png" onclick="talk(4)">
+
+</div>
+
+<div class="creatureRow">
+
+    <img src="manta.png" onclick="talk(5)">
+    <img src="kame.png" onclick="talk(6)">
+    <img src="umiusi.png" onclick="talk(7)">
+
+</div>
+
+<div id="speechBox">
+
+    「……」
+
+</div><br>
+
+<h2>部屋を周った順に部屋を選択しよう</h2>
+
+<div id="mapArea">
+
+    <img src="map-b.png" id="mapImage">
+
+    <!-- 6つの部屋 -->
+
+<button class="roomButton room2"
+    onclick="selectRoom(2)">
+    <img src="room2.png">
+</button>
+
+<button class="roomButton room3"
+    onclick="selectRoom(3)">
+    <img src="room3.png">
+</button>
+
+<button class="roomButton room4"
+    onclick="selectRoom(4)">
+    <img src="room4.png">
+</button>
+
+<button class="roomButton room5"
+    onclick="selectRoom(5)">
+    <img src="room5.png">
+</button>
+
+<button class="roomButton room6"
+    onclick="selectRoom(6)">
+    <img src="room6.png">
+</button>
+
+</div><br>
+
+<!-- 玉手箱を貰った部屋の選択 -->
+
+<h2>玉手箱を貰った部屋を選択しよう</h2>
+
+<div id="giftRoomChoices">
+
+    <label>
+        <input type="radio" name="giftRoom" value="2">
+        楓
+    </label>
+
+    <label>
+        <input type="radio" name="giftRoom" value="3">
+        桜
+    </label>
+
+    <label>
+        <input type="radio" name="giftRoom" value="4">
+        松
+    </label>
+
+    <label>
+        <input type="radio" name="giftRoom" value="5">
+        竹
+    </label>
+
+    <label>
+        <input type="radio" name="giftRoom" value="6">
+        梅
+    </label>
+
+</div>
+
+<!-- 選択した順番と判定結果 -->
+
+<div id="selectedSymbols"></div>
+
+<p id="mapResult"></p>
+
+
+<button onclick="checkRoomOrder()" id="answerButton">
+    解答
+</button>
+
+
+<script>
+
+
+
+const talks={
+
+1:"カレイ「僕はあの日、3つの部屋に行って参加したよ。松の部屋でやった第1イベント楽しかったな〜。僕が参加したイベント、全部ウラシマもいたよね！」",
+
+2:"ヒラメ「俺は楓の部屋と竹の部屋の2部屋でやってたイベントに参加したぜ！第3イベントが楽しかったけど、どっちの部屋でやったっけな。どっちの部屋にもウラシマがいたのは覚えてるぜ！俺は行けてないけど、ウラシマが参加してた1番大きな部屋でやってたイベントも楽しそうだったよな。」",
+
+3:"イカ「あの日は第2イベントに参加した。その部屋には3匹いた。他のイベントは行ってない。」",
+
+4:"タコ「ボクは1回だけカレイと会ったね。そういえば、お土産の箱は最初の部屋で渡していたって聞いたよ。」",
+
+5:"エイ「私は第3と第4のイベントに参加しました。どちらも4匹以上居ましたね。遊んだ部屋は楓の部屋と桜の部屋ですが、遊んだ順番までは思い出せないです。」",
+
+6:"カメ「第1、第2、第5イベントには行って無いけど、それ以外は全部行ったよ！ぼくがイベントにいた時、ウラシマもずっと一緒だったよね！」",
+
+7:"ウミウシ「生き物が多いのが苦手だから、オトヒメ以外に居る生き物の数が、ぼくも含めて3匹以下の3つのイベントに居たよ。それ以外は全部4匹以上居て、怖くて入れなかった...。タコには一度も会わなかったな...。」",
+
+};
+
+function talk(number){
+
+    document.getElementById("speechBox").textContent =
+        talks[number];
+}
+
+/* =========================
+   マップの部屋選択
+========================= */
+
+/*
+   正解の順番
+
+*/
+
+// 正解パターンA
+const correctOrderA = [4, 6, 2, 3, 5];
+const correctGiftRoomA = 5;
+
+// 正解パターンB
+const correctOrderB = [4, 6, 2, 3, 5];
+const correctGiftRoomB = 4;
+
+let selectedRooms = [];
+
+let checkingRooms = false;
+
+let answered = false;
+
+function resetRooms(){
+
+    selectedRooms = [];
+
+    checkingRooms = false;
+
+    // マップ上の丸数字をすべて削除
+    document.querySelectorAll(".selectionNumber")
+        .forEach(number => number.remove());
+
+    // 玉手箱を貰った部屋の選択を解除
+    document.querySelectorAll('input[name="giftRoom"]')
+        .forEach(input => {
+            input.checked = false;
+        });
+
+    // 選択した記号と判定結果を消す
+    document.getElementById("selectedSymbols").innerHTML = "";
+    document.getElementById("mapResult").textContent = "";
+
+}
+
+
+function selectRoom(roomNumber){
+
+    if(reviewMode && !restoringRecord) return;
+    if(answered && !restoringRecord) return;
+
+    // 選択済みの部屋をもう一度押したら、その選択を取り消す
+    const existingIndex = selectedRooms.indexOf(roomNumber);
+    if(existingIndex !== -1){
+        selectedRooms.splice(existingIndex, 1);
+    }else{
+        if(selectedRooms.length >= 5) return;
+        selectedRooms.push(roomNumber);
+    }
+
+    // 丸数字を作り直し、選択順に番号を振り直す
+    document.querySelectorAll(".selectionNumber")
+        .forEach(number => number.remove());
+
+    selectedRooms.forEach((room, index) => {
+        const roomButton = document.querySelector(".room" + room);
+        if(!roomButton) return;
+        const number = document.createElement("div");
+        number.className = "selectionNumber";
+        number.textContent = index + 1;
+        roomButton.appendChild(number);
+    });
+
+    checkingRooms = false;
+    const result = document.getElementById("mapResult");
+    if(result && !reviewMode) result.textContent = "";
+}
+
+function checkRoomOrder(){
+
+    if(reviewMode) return;
+
+    if(answered) return;
+
+    // 5つ選んでいない場合
+    if(selectedRooms.length !== 5){
+
+        document.getElementById("mapResult").textContent =
+            "5つの部屋を選んでください";
+
+        return;
+    }
+
+    // 玉手箱を貰った部屋の選択を取得
+    const giftRoom = document.querySelector(
+        'input[name="giftRoom"]:checked'
+    );
+
+    // 部屋を選択していない場合
+    if(!giftRoom){
+
+        document.getElementById("mapResult").textContent =
+            "玉手箱を貰った部屋を選択してください";
+
+        return;
+    }
+
+    // パターンAの判定
+    const isPatternA =
+        selectedRooms.every((room, index) =>
+            room === correctOrderA[index]
+        ) &&
+        Number(giftRoom.value) === correctGiftRoomA;
+
+    // パターンBの判定
+    const isPatternB =
+        selectedRooms.every((room, index) =>
+            room === correctOrderB[index]
+        ) &&
+        Number(giftRoom.value) === correctGiftRoomB;
+
+    
+// 正解パターンA
+    if(isPatternA){
+
+        answered = true;
+
+        // 前回の記憶用に解答を保存
+        saveStepRecord(3, "", {
+            rooms: [...selectedRooms],
+            giftRoom: correctGiftRoomA
+        });
+
+        // Aルートを保存
+        saveRoute(3, "A");
+
+        document.getElementById("mapResult").textContent =
+            "正解！";
+
+        // 記憶③を取得し、ポップアップを閉じたらSTEP4へ
+        nextPage = "step4.html";
+        unlockMemory(3);
+
+    }
+
+    // 正解パターンB
+    else if(isPatternB){
+
+        answered = true;
+
+        // 前回の記憶用に解答を保存
+        saveStepRecord(3, "", {
+            rooms: [...selectedRooms],
+            giftRoom: correctGiftRoomB
+        });
+
+        // Bルートを保存
+        saveRoute(3, "B");
+
+        document.getElementById("mapResult").textContent =
+            "正解！";
+
+        // 煙を発生させる
+        createSmoke();
+
+        // 2秒後に記憶③を削除してSTEP4へ
+        setTimeout(() => {
+            removeMemoryWithNotice(3);
+            location.href = "step4.html";
+        }, 2000);
+
+    }
+
+// どちらでもない場合
+else {
+
+    document.getElementById("mapResult").textContent =
+        "不正解";
+
+    // 1秒後に選択状態をリセット
+    setTimeout(() => {
+        resetRooms();
+    }, 1000);
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
