@@ -2086,3 +2086,7 @@ img {
         width: 100%;
     }
 }
+
+.paperImage {
+    margin-bottom: 1em;
+}
