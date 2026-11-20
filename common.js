@@ -1366,15 +1366,16 @@ function updateRecordSplitDirection(){
             "minmax(0, var(--split-size, 50%)) 8px minmax(0, 1fr)";
         layout.style.gridTemplateRows = "minmax(0, 1fr)";
         if(currentPane){
-            currentPane.style.visibility = "";
-            currentPane.style.overflow = "";
+            // iframe自体の幅が760px以下でもPC用の記憶を隠さない
+            currentPane.style.visibility = "visible";
+            currentPane.style.overflow = "hidden";
         }
         if(recordPane){
             recordPane.style.minHeight = "";
             recordPane.style.overflow = "";
         }
-        divider.style.visibility = "";
-        divider.style.pointerEvents = "";
+        divider.style.visibility = "visible";
+        divider.style.pointerEvents = "auto";
         divider.style.cursor = "col-resize";
         if(handle){
             handle.style.width = "4px";
@@ -2371,12 +2372,14 @@ function showCrystal(){
 }
 function setupCrystalDisplay(){
     if(reviewMode)return;
-    const panel=document.getElementById("memoryPanel");
-    if(panel && (location.pathname.split("/").pop()==="index.html" || location.pathname.endsWith("/"))
+    const panel = document.getElementById("memoryPanel");
 
-       && sessionStorage.getItem("bbbRecordUnlocked")!=="true"
-
-       && localStorage.getItem("bbbCrystalAcquired")==="true" && !document.getElementById("bbbCrystalMemoryButton")){
+if (
+    panel &&
+    sessionStorage.getItem("bbbRecordUnlocked") !== "true" &&
+    localStorage.getItem("bbbCrystalAcquired") === "true" &&
+    !document.getElementById("bbbCrystalMemoryButton")
+) {
 
         const button=document.createElement("button");
 

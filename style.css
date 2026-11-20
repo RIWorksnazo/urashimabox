@@ -2090,3 +2090,8 @@ img {
 .paperImage {
     margin-bottom: 1em;
 }
+/* PC方向を引き継いだ記憶iframeは、幅が760px以下でも隠さない。
+   CSSのメディアクエリだけでPC/スマホを決めない。 */
+body:has(#recordSplitLayout) #recordSplitLayout > #currentPane[style*="visibility: visible"] {
+    visibility: visible;
+}
