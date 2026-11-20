@@ -256,7 +256,7 @@ function startFog(){
     const page = location.pathname.split("/").pop();
 
     // STEP4では、STEP3の分岐によって煙を切り替える
-    if(page === "step4.html"){
+    if(page === "4kV9aT5wC7.html"){
 
         if(getRoute(3) !== "B") return;
 
@@ -554,7 +554,7 @@ const pageRoutes = {
     "2Am4Xr9Ta7.html": [1, "A"],
     "2Bq9Hd6Fs3.html": [1, "B"],
     "3Az3Pc8Nm4.html": [2, "A"],
-    "step3b.html": [2, "B"]
+    "3BtY9wB3hZ.html": [2, "B"]
 };
 
 if (pageRoutes[currentPage]) {
@@ -1806,13 +1806,13 @@ function showRecordStep(step){
 
 
     // STEP4a・STEP4bの古い記憶は
-    // 統合後のstep4.htmlで表示する
+    // 統合後の4kV9aT5wC7.htmlで表示する
 
     if(
         page === "step4a.html" ||
         page === "step4b.html"
     ){
-        page = "step4.html";
+        page = "4kV9aT5wC7.html";
     }
 
 
@@ -2123,8 +2123,8 @@ function showBBBSpecialStory(){
         "2Am4Xr9Ta7.html":"過去の記憶に触れた直後、景色が切り替わった。\n記憶の中で選ばれた答えが、今の僕をこの場所へ連れてきたらしい。",
         "2Bq9Hd6Fs3.html":"白い煙が視界を覆った。\n過去の記憶の答えが、今の世界にまで影響している。\n薄れていく記憶を確かめながら、次の暗号に向かう。",
         "3Az3Pc8Nm4.html":"過去の記憶からつながった道を、今の僕が歩いている。\nこの先の答えも、僕自身が選ばなければならない。",
-        "step3b.html":"また煙が立ち込め、思い出が遠のく。\nそれでも、過去の記憶から始まったこの道を進むしかない。",
-        "step4.html":"過去の記憶から続いた旅は、再び最後の暗号へたどり着いた。\n今度こそ、この答えで何が変わるのだろう。"
+        "3BtY9wB3hZ.html":"また煙が立ち込め、思い出が遠のく。\nそれでも、過去の記憶から始まったこの道を進むしかない。",
+        "4kV9aT5wC7.html":"過去の記憶から続いた旅は、再び最後の暗号へたどり着いた。\n今度こそ、この答えで何が変わるのだろう。"
     };
     const text=stories[page];
     if(!text)return;
@@ -2132,7 +2132,7 @@ function showBBBSpecialStory(){
         ?document.querySelector("#stepStory p")
         :document.querySelector("#story p, #storyA p:not(.hidden), #storyB p:not(.hidden)");
     if(target){target.textContent=text;target.style.whiteSpace="pre-line";}
-    if(page==="step4.html"){
+    if(page==="4kV9aT5wC7.html"){
         const active=document.querySelector(getRoute(3)==="B"?"#storyB p":"#storyA p");
         if(active){active.textContent=text;active.style.whiteSpace="pre-line";}
     }
@@ -2240,7 +2240,7 @@ function handleBBBPastAnswer(data){
             penColor:kind,
             route:[1,2,3].map(i=>history.routes[i]).join("")
         }));
-        location.href="step4.html";
+        location.href="4kV9aT5wC7.html";
         return;
     }
     // 過去の記憶は変更せず、今のゲームの記憶として解答を採用する
@@ -2255,7 +2255,7 @@ function handleBBBPastAnswer(data){
     localStorage.setItem("currentRecords",JSON.stringify(records));
     saveRoute(step,route);
     const target=step===1?"step2"+route.toLowerCase()+".html"
-        :step===2?"step3"+route.toLowerCase()+".html":"step4.html";
+        :step===2?"step3"+route.toLowerCase()+".html":"4kV9aT5wC7.html";
     if(route==="B"){
     if(typeof createSmoke==="function")createSmoke();
 
