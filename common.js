@@ -2485,3 +2485,20 @@ document.addEventListener("dragstart", function(event) {
         event.preventDefault();
     }
 });
+
+function openHintConfirm() {
+    const result = window.confirm("ヒントを閲覧しますか？");
+
+    if (result) {
+        window.location.href = "hint.html";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ryugujo = document.getElementById("ryugujo");
+
+    if (ryugujo) {
+        ryugujo.style.cursor = "pointer";
+        ryugujo.addEventListener("click", openHintConfirm);
+    }
+});
