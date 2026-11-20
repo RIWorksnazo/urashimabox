@@ -197,9 +197,8 @@ function check(penColor){
 
     answered = true;
 
-    // 水晶を手に持っている場合だけ、暗転しない特別ストーリーへ。
-    if (localStorage.getItem("bbbCrystalAcquired") === "true" &&
-        sessionStorage.getItem("bbbCrystalVisible") === "true") {
+    // 水晶を一度獲得していれば、常に所持しているものとして特別ストーリーへ。
+    if (localStorage.getItem("bbbCrystalAcquired") === "true") {
         saveStepRecord(4, ans, {penColor: penColor});
         result.textContent = "正解！";
         startCrystalStory(route, ans, penColor);
@@ -306,6 +305,10 @@ function startCrystalStory(route, answer, penColor) {
           </div>
         </form>
         <button id="crystalStoryNext" type="button">次へ</button>
+        <details id="crystalStoryLogPanel" class="crystalStoryLogPanel">
+          <summary>これまでの会話を振り返る</summary>
+          <div id="crystalStoryLog" class="crystalStoryLog" aria-live="off"></div>
+        </details>
       </div>`;
     document.body.appendChild(screen);
 
@@ -333,6 +336,16 @@ function startCrystalStory(route, answer, penColor) {
       .crystalStoryPrompt { font-weight:bold; margin:12px 0; }
       #crystalStoryError { color:#fff0a8; min-height:1.5em; }
       #crystalStoryNext { margin-top:18px; }
+      .crystalStoryLogPanel { margin-top:24px; border-top:1px solid rgba(255,255,255,.55);
+        padding-top:16px; text-align:left; }
+      .crystalStoryLogPanel summary { cursor:pointer; font-weight:bold; font-size:16px;
+        padding:8px 4px; }
+      .crystalStoryLog { max-height:38vh; overflow-y:auto; padding:8px 4px;
+        overscroll-behavior:contain; }
+      .crystalStoryLog p { margin:0; padding:12px 8px; font-size:15px;
+        line-height:1.7; white-space:pre-wrap; color:white;
+        border-bottom:1px solid rgba(255,255,255,.22); overflow-wrap:anywhere; }
+      .crystalStoryLogEmpty { opacity:.75; }
       @media(max-width:600px){#crystalStoryLine{font-size:16px;}}
     `;
     document.head.appendChild(css);
@@ -346,14 +359,14 @@ function startCrystalStory(route, answer, penColor) {
       {text:"最後の答えも書けたことですし、これで大丈夫です"},
       {text:"記憶が維持されない私が毎回あなたに玉手箱を渡してしまっているみたいですが、開けなければ良いだけです"},
       {text:"箱を開ける前に戻って、あの箱はずっと開けずにいてください"},
-      {parts:["", "が勝手に",""], answers:["玉手箱", "開く"]},
+      {parts:["「", "が勝手に", "」"], answers:["玉手箱", "開く"]},
       {text:"あの箱がそんな箱だったなんて…。そんな…。それならどうしたら良いのでしょう…。"},
-      {parts:["", "で", "", "に戻ろう"], answers:["二人", "過去"]},
+      {parts:["「", "で", "に戻ろう」"], answers:["二人", "過去"]},
       {text:"それができたら良いのですが、お恥ずかしいことに、水晶を運ぶときに手を怪我しちゃって、文字が書けません。ウラシマが私の分まで書いても、水晶の効果は発揮されないですし…。"},
       {text:"力になれずすみません…。"},
-      {parts:["", "を", ""], answers:["日記帳", "破る"]},
+      {parts:["「", "を", "」"], answers:["日記帳", "破る"]},
       {text:"なるほど、確かに日記になら私が書いた赤文字がありますね。どの部分を破りましょう？"},
-      {parts:["破る文字は", ""], answers:["らいす"]}
+      {parts:["「破る文字は", "」"], answers:["らいす"]}
     ];
     let position = 0;
     const line = screen.querySelector("#crystalStoryLine");
@@ -361,6 +374,26 @@ function startCrystalStory(route, answer, penColor) {
     const answerArea = screen.querySelector("#crystalStoryAnswerArea");
     const error = screen.querySelector("#crystalStoryError");
     const next = screen.querySelector("#crystalStoryNext");
+    const conversationLog = screen.querySelector("#crystalStoryLog");
+    const completedScenes = [];
+
+    // これまでに読んだ文章だけを表示し、未来の会話や正解は先に見せない。
+    function updateConversationLog() {
+        conversationLog.replaceChildren();
+        if (completedScenes.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "crystalStoryLogEmpty";
+            empty.textContent = "まだ振り返る会話はありません。";
+            conversationLog.appendChild(empty);
+            return;
+        }
+        completedScenes.forEach((text, index) => {
+            const entry = document.createElement("p");
+            entry.textContent = `${index + 1}. ${text}`;
+            conversationLog.appendChild(entry);
+        });
+    }
+    updateConversationLog();
 
 
 
@@ -388,11 +421,11 @@ function normalize(v) {
 // 各入力欄で許容する単語
 const acceptedAnswers = {
     "玉手箱": ["玉手箱", "たまてばこ", "箱", "はこ"],
-    "開く": ["開く", "あく", "開いてしまう",],
+    "開く": ["開く", "開いた", "あいた","ひらいた", "あく", "開いてしまう",],
     "二人": ["二人", "ふたり", ],
     "過去": ["かこ", "箱を渡す時", "箱を貰った時", ],
     "日記帳": ["日記帳", "にっきちょう", "日記", "にっき"],
-    "破る": ["破る", "やぶる", "ちぎる", "破いて", "千切る", "破ろう", "千切ろう", "切り取る"],
+    "破る": ["破る", "やぶる", "ちぎる","千切って","ちぎって", "切って","破いて", "破って","千切る", "破ろう", "千切ろう", "切り取る", "きる", "切る", "切り取ろう","きりとる", "使う", "つかう"],
     "らいす": ["らいす", "ライス"]
 };
 
@@ -429,7 +462,10 @@ function isAcceptedAnswer(input, answer) {
         error.textContent = "";
         if (needsInput) line.querySelector("input")?.focus();
     }
-    function advance() {
+    function advance(completedText) {
+        const scene = scenes[position];
+        completedScenes.push(completedText ?? scene.text ?? "");
+        updateConversationLog();
         position++;
         if(position < scenes.length) {render(); return;}
         finishCrystalStory(route, penColor);
@@ -441,9 +477,13 @@ function isAcceptedAnswer(input, answer) {
         const fields = [...line.querySelectorAll("input")];
         const valid = scene.answers.every((a, i) => isAcceptedAnswer(fields[i].value, a));
         if(!valid) {error.textContent="穴埋めの言葉が違うようだ。"; return;}
-        advance();
+        // ユーザーが確定した単語を、そのまま会話ログへ残す。
+        const values = fields.map(field => field.value.trim());
+        const completedText = scene.parts.reduce((text, part, i) =>
+            text + part + (i < values.length ? values[i] : ""), "");
+        advance(completedText);
     });
-    next.addEventListener("click", advance);
+    next.addEventListener("click", () => advance());
     render();
 }
 
