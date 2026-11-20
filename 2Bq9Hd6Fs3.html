@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<script src="common.js"></script>
+
+<title>STEP2</title>
+
+</head>
+
+<body>
+
+<div id="fogLeft"></div>
+<div id="fogRight"></div>
+
+<div id="smoke-container"></div>
+
+<div id="memoryPanel"></div>
+
+<div id="ground"></div>
+
+<img
+    src="ryuuguujyou.png"
+    id="ryugujo"
+    alt="竜宮城">
+
+<h1>STEP2</h1>
+
+<!-- 記憶ポップアップ -->
+
+<div id="memoryViewer" class="modal hidden">
+
+    <div class="modalContent">
+
+        <h2 id="viewerTitle"></h2>
+
+        <p id="viewerText"></p>
+
+        <img
+            id="viewerImage"
+            class="hidden"
+            src=""
+            style="
+                max-width:250px;
+                margin-top:15px;
+                border-radius:10px;
+            ">
+
+        <button onclick="closeMemoryViewer()">
+            閉じる
+        </button>
+
+    </div>
+
+</div>
+
+<div id="story">
+    
+    <p>
+    「どうして約束を破ったのですか！？」<br>
+    「私の約束通りに解かないと、危険な煙がどんどん増えてしまうのですよ！」<br>
+    オトヒメは怒っている。<br>
+    「次は約束を守ってくださいね。次の謎はこちらです。」
+    </p>
+
+    <img
+        src="ikariotohime.png"
+        id="otohime"
+     alt="怒り乙姫">
+
+</div>
+
+<br><br>
+
+<h2>まずは1〜4を解き、5の答えを導こう。</h2><br>
+
+    <div class="promiseBox">
+    <img src="hukidasi.png" alt="オトヒメとの約束" class="promiseImage">
+    <div class="promiseText">
+        ウラシマ以外の陸に住む動植物を無視して解くこと
+    </div>
+
+</div>
+
+<input id="answer">
+
+<button onclick="check()">
+解答
+</button>
+
+<p id="result"></p>
+
+<script>
+
+function check(){
+
+    if(reviewMode) return;
+
+    const ans =
+        document
+        .getElementById("answer")
+        .value
+        .trim();
+
+    if(
+        ans === "いこく"||
+        ans === "イコク"||
+        ans === "異国"||
+        ans === "いらく"||
+        ans === "イラク"
+    ){
+
+        document
+            .getElementById("result")
+            .innerHTML =
+            "1正解";
+
+        return;
+
+    }
+
+    if(
+        ans === "くぶん"||
+        ans === "クブン"||
+        ans === "区分"||
+        ans === "ちたん"||
+        ans === "チタン"
+    ){
+
+        document
+            .getElementById("result")
+            .innerHTML =
+            "2正解";
+
+        return;
+
+    }
+
+    if(
+        ans === "こらい"||
+        ans === "コライ"||
+        ans === "古来"||
+        ans === "らんち"||
+        ans === "ランチ"
+    ){
+
+        document
+            .getElementById("result")
+            .innerHTML =
+            "3正解";
+    
+        return;
+
+    }
+
+    if(
+        ans === "ちくわ"||
+        ans === "チクワ"||
+        ans === "たいわ"||
+        ans === "タイワ"||
+        ans === "対話"
+    ){
+
+        document
+            .getElementById("result")
+            .innerHTML =
+            "4正解";
+
+        return;
+
+    }
+
+    if(
+        ans === "こぶら"||
+        ans === "コブラ"||
+        ans === "らいん"||
+        ans === "ライン"
+    ){
+
+        document
+            .getElementById("result")
+            .innerHTML =
+            "不正解　現在記憶①は忘れています";
+
+        return;
+
+    }
+
+    // E1
+    if(
+        ans === "くらぶ"||
+        ans === "クラブ"
+    ){
+        saveStepRecord(2, ans);
+
+        saveRoute(2, "A");
+
+        nextPage = "step3a.html";
+
+        unlockMemory(2);
+
+        return;
+    }
+
+    // E2
+    if(
+        ans === "たんい"||
+        ans === "タンイ"||
+        ans === "単位"
+    ){
+        saveStepRecord(2, ans);
+
+        saveRoute(2, "B");
+
+        createSmoke();
+
+        setTimeout(()=>{
+
+            removeMemoryWithNotice(2);
+            location.href =
+            "step3b.html";
+
+        },2000);
+
+        return;
+    }
+    
+    
+    else{
+
+        document
+            .getElementById("result")
+            .innerHTML =
+            "不正解";
+
+    }
+
+}
+
+
+</script>
+
+</body>
+</html>
