@@ -2,9 +2,253 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>お詫び</title><link rel="stylesheet" href="style.css"></head><body><main style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center">
+<title>お詫び</title>
+<link rel="stylesheet" href="style.css">
+<style>
+  
+#ePuzzle { width:min(100%,1000px); margin:28px auto 50px; box-sizing:border-box; padding:0 12px; }
+#ePuzzle .puzzle-image-area { width:100%; position:relative; line-height:0; user-select:none; -webkit-user-select:none; }
+#ePuzzle .puzzle-image-area > img { display:block; width:100%; height:auto; pointer-events:none; }
+/* 画像内の灰色の盤面：2048×1448pxの原画像上で、左上(500,516)、8列×6行 */
+#ePuzzle .piece-board {
+ position:absolute; left:24.4140625%; top:35.6353591%; width:52.34375%; height:55.5248619%;
+ touch-action:none; box-sizing:border-box;
+}
+
+#ePuzzle .piece-board img { position:absolute; display:block; height:auto; max-width:none; cursor:grab; touch-action:none; user-select:none; -webkit-user-drag:none; }
+#ePuzzle .piece-board img:active, #ePuzzle .piece-tray img:active { cursor:grabbing; }
+#ePuzzle .piece-help { text-align:center; font-size:16px; margin:18px auto 12px; color:inherit; }
+#ePuzzle .piece-tray { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin:auto; max-width:940px; }
+#ePuzzle .piece-slot { flex:0 0 auto; width:calc(var(--tray-cell) * 3); height:calc(var(--tray-cell) * 3); display:flex; align-items:center; justify-content:center; box-sizing:border-box; }
+#ePuzzle .piece-slot img { display:block; max-width:none; height:auto; cursor:grab; touch-action:none; user-select:none; -webkit-user-drag:none; }
+#ePuzzle .drag-preview { position:fixed; z-index:999999; pointer-events:none; opacity:.90; max-width:none; height:auto; filter:drop-shadow(0 3px 5px rgba(0,0,0,.2)); }
+#ePuzzle { --tray-cell:clamp(28px,5vw,43px); }
+
+@media (max-width: 520px) {
+    #ePuzzle {
+        padding: 0 3px;
+        --tray-cell: 22px;
+    }
+
+    #ePuzzle .piece-tray {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        justify-items: center;
+        align-items: center;
+        gap: 12px 4px;
+        width: 100%;
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    #ePuzzle .piece-slot {
+        width: 100%;
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: visible;
+    }
+
+    #ePuzzle .piece-help {
+        font-size: 14px;
+        color: white;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<main style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center">
 <h1>お詫び</h1>
 <p style="color:white">
     STEP1のEの問題のパズルピースに印刷ミスがありました。申し訳ございません。<br>
-    こちらのサイトで対応をします。更新まで今しばらくお待ちください。<br>
+    代わりにこちらのサイトをご活用ください。<br>
 </p>
+
+<div id="ePuzzle">
+  <div class="puzzle-image-area">
+    <img src="1st_E.png" alt="STEP1 E のパズル問題">
+    <div class="piece-board" id="pieceBoard" aria-label="パズル盤面"></div>
+  </div>
+  
+  <p style="color:white">
+    タップで表裏切り替え
+  </p>
+
+  <div class="piece-tray" id="pieceTray" aria-label="パズルピース"></div>
+</div>
+
+</main>
+<script>
+
+(() => {
+
+  const board = document.getElementById('pieceBoard');
+  const tray = document.getElementById('pieceTray');
+  const pieceCount = 11;
+  const cols = 8, rows = 6;
+  const storageKey = 'urashimabox_1stE_piece_state_v1';
+  // 各画像は1マス330〜333px相当。裏面は表面+11。
+  const shapes = [[2,2],[3,3],[2,3],[3,2],[3,3],[3,2],[3,2],[3,3],[3,2],[2,3],[3,2]];
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(storageKey) || '{}') || {}; } catch (_) {}
+  const pieces = [];
+  const slots = [];
+  const boardSize = () => board.getBoundingClientRect().width / cols;
+  const traySize = () => parseFloat(getComputedStyle(document.getElementById('ePuzzle')).getPropertyValue('--tray-cell')) || 35;
+  const filename = (i, back) => `p${i + (back ? 11 : 0)}.png`;
+  function persist() {
+    const state = {};
+    pieces.forEach(p => {state[p.index] = {back:p.back, x:p.x, y:p.y};});
+    try { localStorage.setItem(storageKey, JSON.stringify(state)); } catch (_) {}
+  }
+
+  function render(p) {
+    const cell = p.x === null
+    ? (window.innerWidth <= 520
+        ? Math.min(
+            traySize(),
+            (p.slot.clientWidth - 4) / p.w,
+            (p.slot.clientHeight - 4) / p.h
+          )
+        : traySize())
+    : boardSize();
+    
+    p.el.src = filename(p.index, p.back);
+    p.el.style.width = (p.w * cell) + 'px';
+    p.el.style.height = (p.h * cell) + 'px';
+    if (p.x === null) {
+      p.el.style.left = ''; p.el.style.top = '';
+      if (p.el.parentElement !== p.slot) p.slot.appendChild(p.el);
+    } else {
+      p.el.style.left = (p.x * cell) + 'px';
+      p.el.style.top = (p.y * cell) + 'px';
+      if (p.el.parentElement !== board) board.appendChild(p.el);
+    }
+  }
+
+  function refreshAll() { pieces.forEach(render); }
+  let active = null;
+  // 盤面外でも終了を検出
+  window.addEventListener('pointermove', moveDrag, {passive:false});
+  window.addEventListener('pointerup', endDrag);
+  window.addEventListener('pointercancel', cancelDrag);
+  window.addEventListener('blur', () => {
+    if (!active) return;
+    const p = active.p;
+    cleanup();
+    render(p);
+  });
+
+  piecesInit();
+  window.addEventListener('resize', refreshAll);
+  function piecesInit() {
+    for (let i=1; i<=pieceCount; i++) {
+      const [w,h] = shapes[i-1];
+      const old = saved[i] || {};
+      const x = Number.isInteger(old.x) && old.x>=0 && old.x<=cols-w &&
+                Number.isInteger(old.y) && old.y>=0 && old.y<=rows-h ? old.x : null;
+      const y = x===null ? null : old.y;
+      const slot = document.createElement('div');
+      slot.className = 'piece-slot';
+      tray.appendChild(slot); slots.push(slot);
+      const el = document.createElement('img');
+      el.alt = `ピース${i}`;
+      el.draggable = false;
+      const p = {index:i, w,h, x,y, back:old.back === true, slot, el};
+      pieces.push(p);
+      el.addEventListener('pointerdown', e => startDrag(e,p));
+      render(p);
+    }
+  }
+
+  function startDrag(e,p) {
+
+    if (e.button !== undefined && e.button !== 0) return;
+    if (active) return;
+    e.preventDefault();
+    const rect = p.el.getBoundingClientRect();
+    const offsetX = (e.clientX-rect.left)/rect.width;
+    const offsetY = (e.clientY-rect.top)/rect.height;
+    const ghost = p.el.cloneNode(false);
+    ghost.className = 'drag-preview';
+    document.getElementById('ePuzzle').appendChild(ghost);
+    active = {p, pointerId:e.pointerId, startX:e.clientX, startY:e.clientY, offsetX, offsetY, ghost, moved:false};
+    ghost.style.visibility = 'hidden';
+    const size = boardSize();
+    ghost.style.width = p.w*size+'px';
+    ghost.style.height = p.h*size+'px';
+    moveGhost(e.clientX,e.clientY);
+    // 移動中に要素の外へ出ても操作を止めない
+  }
+
+  function moveGhost(clientX,clientY) {
+
+    if(!active)return;
+    const {ghost,offsetX,offsetY} = active;
+    const w=parseFloat(ghost.style.width), h=parseFloat(ghost.style.height);
+    ghost.style.left=(clientX-w*offsetX)+'px';
+    ghost.style.top=(clientY-h*offsetY)+'px';
+
+  }
+
+  function moveDrag(e) {
+
+    if(!active || active.pointerId!==e.pointerId)return;
+    if(e.cancelable)e.preventDefault();
+    if (
+        !active.moved &&
+        Math.hypot(e.clientX-active.startX, e.clientY-active.startY) > 7
+    ) {
+        active.moved = true;
+
+        // ドラッグ開始時だけプレビューを表示
+        active.ghost.style.visibility = 'visible';
+        active.p.el.style.visibility = 'hidden';
+    }
+
+    if (active.moved) {
+    moveGhost(e.clientX, e.clientY);
+    }
+
+  }
+
+  function endDrag(e) {
+    if(!active || active.pointerId!==e.pointerId)return;
+    const {p,moved,offsetX,offsetY}=active;
+    cleanup();
+    if(!moved) {
+      p.back=!p.back;
+    } else {
+      const rect=board.getBoundingClientRect();
+      const cell=boardSize();
+      const targetX=(e.clientX-rect.left)/cell-offsetX*p.w;
+      const targetY=(e.clientY-rect.top)/cell-offsetY*p.h;
+      // 盤面上に落としたらマス目に合わせる 盤面外なら手元に戻す 
+      if(e.clientX>=rect.left && e.clientX<=rect.right && e.clientY>=rect.top && e.clientY<=rect.bottom) {
+        p.x=Math.max(0,Math.min(cols-p.w,Math.round(targetX)));
+        p.y=Math.max(0,Math.min(rows-p.h,Math.round(targetY)));
+      } else {
+        p.x=null; p.y=null;
+      }
+    }
+    render(p); persist();
+  }
+
+  function cancelDrag(e) { if(active && active.pointerId===e.pointerId) {const p=active.p;cleanup();render(p);} }
+  function cleanup() {
+    const {p,ghost}=active;
+    p.el.style.visibility = 'visible';
+    ghost.remove();
+    active=null;
+  }
+
+})();
+
+</script>
+</body>
+</html>
